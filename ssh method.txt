@@ -1,0 +1,56 @@
+rahman@rahman:~$ docker --version
+Docker version 20.10.5, build 55c4c88
+
+//enable ssh on the machine
+
+rahman@rahman:~$ sudo systemctl status ssh
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/lib/systemd/system/ssh.service; enabled; vendor preset: >
+     Active: active (running) since Wed 2021-03-17 10:44:04 IST; 1h 9min ago
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+   Main PID: 12680 (sshd)
+      Tasks: 1 (limit: 2316)
+     Memory: 1.3M
+     CGroup: /system.slice/ssh.service
+             └─12680 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
+
+Mar 17 10:44:03 rahman systemd[1]: Starting OpenBSD Secure Shell server...
+Mar 17 10:44:04 rahman sshd[12680]: Server listening on 0.0.0.0 port 22.
+Mar 17 10:44:04 rahman sshd[12680]: Server listening on :: port 22.
+Mar 17 10:44:04 rahman systemd[1]: Started OpenBSD Secure Shell server.
+
+//get the IPaddress of the container
+
+rahman@rahman:~$ sudo docker inspect -f "{{ .networksettings.IPAddress }}" nginx-test
+
+Template parsing error: template: :1:19: executing "" at <.networksettings.IPAddress>: map has no entry for key "networksettings"
+rahman@rahman:~$ sudo docker inspect -f "{{ .NetworkSetting.IPAddress }}" nginx-test
+
+Template parsing error: template: :1:18: executing "" at <.NetworkSetting.IPAddress>: map has no entry for key "NetworkSetting"
+rahman@rahman:~$ sudo docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS                  NAMES
+e82f8ef78e60   nginx     "/docker-entrypoint.…"   57 minutes ago   Up 57 minutes   80/tcp                 nginx-test
+9db94a227646   nginx     "/docker-entrypoint.…"   2 hours ago      Up 2 hours      0.0.0.0:8080->80/tcp   condescending_robinson
+rahman@rahman:~$ sudo docker inspect -f "{{ .NetworkSettings.IPAddress }}" nginx-test
+172.17.0.3
+rahman@rahman:~$ ping -c 3 172.17.0.3
+
+//ssh into docker container
+
+PING 172.17.0.3 (172.17.0.3) 56(84) bytes of data.
+64 bytes from 172.17.0.3: icmp_seq=1 ttl=64 time=0.139 ms
+64 bytes from 172.17.0.3: icmp_seq=2 ttl=64 time=0.100 ms
+64 bytes from 172.17.0.3: icmp_seq=3 ttl=64 time=0.152 ms
+
+--- 172.17.0.3 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2036ms
+rtt min/avg/max/mdev = 0.100/0.130/0.152/0.022 ms
+rahman@rahman:~$ ssh root@172.17.0.3
+ssh: connect to host 172.17.0.3 port 22: Connection refused
+rahman@rahman:~$ su -
+Password: 
+root@rahman:~# ssh root@172.17.0.3
+ssh: connect to host 172.17.0.3 port 22: Connection refused
+root@rahman:~# exit
+logout
