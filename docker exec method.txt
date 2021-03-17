@@ -1,0 +1,33 @@
+//Using docker exec to Run Commands in a Docker Container:
+
+rahman@rahman:~$ sudo apt-get update
+Hit:1 http://in.archive.ubuntu.com/ubuntu focal InRelease
+Get:2 http://in.archive.ubuntu.com/ubuntu focal-updates InRelease [114 kB]
+Get:3 http://in.archive.ubuntu.com/ubuntu focal-backports InRelease [101 kB]  
+Hit:4 https://download.docker.com/linux/ubuntu focal InRelease                
+Get:5 http://security.ubuntu.com/ubuntu focal-security InRelease [109 kB]     
+Get:6 http://in.archive.ubuntu.com/ubuntu focal-updates/main amd64 DEP-11 Metadata [264 kB]
+Get:7 http://in.archive.ubuntu.com/ubuntu focal-updates/universe amd64 DEP-11 Metadata [302 kB]
+Get:8 http://in.archive.ubuntu.com/ubuntu focal-updates/multiverse amd64 DEP-11 Metadata [2,468 B]
+Get:9 http://in.archive.ubuntu.com/ubuntu focal-backports/universe amd64 DEP-11 Metadata [1,768 B]
+Get:10 http://security.ubuntu.com/ubuntu focal-security/main amd64 DEP-11 Metadata [24.3 kB]
+Get:11 http://security.ubuntu.com/ubuntu focal-security/universe amd64 DEP-11 Metadata [58.3 kB]
+Fetched 977 kB in 4s (218 kB/s)                        
+Reading package lists... Done
+
+rahman@rahman:~$ sudo docker pull nginx
+Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:d2925188effb4ddca9f14f162d6fba9b5fab232028aa07ae5c1dab764dca8f9f
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+
+rahman@rahman:~$ sudo docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED       STATUS       PORTS                  NAMES
+e82f8ef78e60   nginx     "/docker-entrypoint.…"   7 hours ago   Up 7 hours   80/tcp                 nginx-test
+9db94a227646   nginx     "/docker-entrypoint.…"   8 hours ago   Up 8 hours   0.0.0.0:8080->80/tcp   condescending_robinson
+rahman@rahman:~$ sudo docker run --name nginx-test -d nginx
+docker: Error response from daemon: Conflict. The container name "/nginx-test" is already in use by container "e82f8ef78e600a21775d43cb22471354d512586676b30a49071f5ca34cc7c859". You have to remove (or rename) that container to be able to reuse that name.
+See 'docker run --help'.
+rahman@rahman:~$ sudo docker exec -it nginx-test /bin/bash
+root@e82f8ef78e60:/# now we are inside the container
